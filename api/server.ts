@@ -6,17 +6,17 @@ import swaggerUi from "swagger-ui-express";
 const app = express();
 app.use(bodyParser.json());
 
-// ===== Swagger Configuration =====
+// ===== Swagger configuration =====
 const swaggerOptions = {
   definition: {
     openapi: "3.0.0",
     info: {
       title: "Products API",
       version: "1.0.0",
-      description: "CRUD API cho Products với Swagger docs",
+      description: "CRUD API for Products with Swagger documentation",
     },
   },
-  apis: ["./api/server.ts"],
+  apis: ["./api/server.ts"], // the file that contains the @swagger comments
 };
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
@@ -27,14 +27,14 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
  * @swagger
  * tags:
  *   name: Products
- *   description: Quản lý sản phẩm
+ *   description: Manage products
  */
 
 /**
  * @swagger
  * /products:
  *   post:
- *     summary: Tạo sản phẩm mới
+ *     summary: Create a new product
  *     tags: [Products]
  *     requestBody:
  *       required: true
@@ -50,29 +50,32 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
  *               features: { type: array, items: { type: string } }
  *     responses:
  *       201:
- *         description: Sản phẩm được tạo thành công
+ *         description: Product successfully created
  */
 app.post("/products", async (req, res) => {
   const { name, price, categoryName, images, features } = req.body;
   if (!name || !price || !categoryName) {
-    return res.status(400).json({ error: "Tên sản phẩm, giá và danh mục là bắt buộc" });
+    return res.status(400).json({ error: "Product name, price and category are required" });
   }
-  // 🔹 Ở đây bạn thay bằng logic Supabase giống trong route.ts
-  return res.status(201).json({ message: "Product created successfully", product: { name, price, categoryName, images, features } });
+  // 🔹 Replace with your Supabase logic
+  return res.status(201).json({
+    message: "Product created successfully",
+    product: { name, price, categoryName, images, features },
+  });
 });
 
 /**
  * @swagger
  * /products:
  *   get:
- *     summary: Lấy danh sách sản phẩm
+ *     summary: Get all products
  *     tags: [Products]
  *     responses:
  *       200:
- *         description: Danh sách sản phẩm
+ *         description: A list of products
  */
 app.get("/products", async (req, res) => {
-  // 🔹 Thay bằng supabase select
+  // 🔹 Replace with Supabase select query
   return res.json([{ id: 1, name: "Snack", price: 10000 }]);
 });
 
@@ -80,7 +83,7 @@ app.get("/products", async (req, res) => {
  * @swagger
  * /products/{id}:
  *   get:
- *     summary: Lấy sản phẩm theo ID
+ *     summary: Get a product by ID
  *     tags: [Products]
  *     parameters:
  *       - in: path
@@ -90,11 +93,11 @@ app.get("/products", async (req, res) => {
  *           type: integer
  *     responses:
  *       200:
- *         description: Một sản phẩm
+ *         description: A single product
  */
 app.get("/products/:id", async (req, res) => {
   const { id } = req.params;
-  // 🔹 supabase.from("products").select("*").eq("id", id)
+  // 🔹 Replace with supabase.from("products").select("*").eq("id", id)
   return res.json({ id, name: "Snack", price: 10000 });
 });
 
@@ -102,7 +105,7 @@ app.get("/products/:id", async (req, res) => {
  * @swagger
  * /products/{id}:
  *   put:
- *     summary: Cập nhật sản phẩm theo ID
+ *     summary: Update a product by ID
  *     tags: [Products]
  *     parameters:
  *       - in: path
@@ -122,12 +125,12 @@ app.get("/products/:id", async (req, res) => {
  *               categoryName: { type: string }
  *     responses:
  *       200:
- *         description: Sản phẩm được cập nhật
+ *         description: Product successfully updated
  */
 app.put("/products/:id", async (req, res) => {
   const { id } = req.params;
   const body = req.body;
-  // 🔹 supabase.from("products").update(body).eq("id", id)
+  // 🔹 Replace with supabase.from("products").update(body).eq("id", id)
   return res.json({ message: "Product updated successfully", product: { id, ...body } });
 });
 
@@ -135,7 +138,7 @@ app.put("/products/:id", async (req, res) => {
  * @swagger
  * /products/{id}:
  *   delete:
- *     summary: Xóa sản phẩm theo ID
+ *     summary: Delete a product by ID
  *     tags: [Products]
  *     parameters:
  *       - in: path
@@ -145,16 +148,16 @@ app.put("/products/:id", async (req, res) => {
  *           type: integer
  *     responses:
  *       200:
- *         description: Sản phẩm đã được xóa
+ *         description: Product successfully deleted
  */
 app.delete("/products/:id", async (req, res) => {
   const { id } = req.params;
-  // 🔹 supabase.from("products").delete().eq("id", id)
+  // 🔹 Replace with supabase.from("products").delete().eq("id", id)
   return res.json({ message: `Product ${id} deleted successfully` });
 });
 
-// ===== Chạy server =====
-app.listen(4000, () => {
-  console.log("API Server chạy tại http://localhost:4000");
-  console.log("Swagger Docs: http://localhost:4000/api-docs");
+// ===== Run the server =====
+app.listen(4004, () => {
+  console.log("API Server is running at http://localhost:4004");
+  console.log("Swagger Docs available at http://localhost:4004/api-docs");
 });
